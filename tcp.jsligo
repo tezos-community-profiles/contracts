@@ -1,0 +1,15 @@
+#include "./types.jsligo"
+
+namespace TCP {
+  type storage = tcp_storage;
+  type ret = [list<operation>, tcp_storage];
+
+  @entry 
+  const clear_initiators = (_p:unit, s:storage) : ret => {
+    if(Set.mem(Tezos.get_sender(), s.initiators) == false) {
+      return failwith ("Only initiators can call this entrypoint")
+    }
+    const updated_storage = {...s, initiators: Set.empty};
+    return [list([]), updated_storage];
+  }
+};

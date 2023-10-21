@@ -1,0 +1,11 @@
+const assert_string_failure = ((res:test_exec_result, expected:string) : unit => { 
+  const expected_res = Test.eval(expected);
+  match (res) {
+    when(Success(_n)): failwith("Success, but should be rejected");
+    when(Fail(e)): match (e) {
+      when(Rejected(x)): ((x:[michelson_program,address]) => { assert(Test.michelson_equal(x[0], expected_res)) })(x); 
+      when(Balance_too_low(_x)): failwith("Balance too low, but should be rejected"); 
+      when(Other(_s)): failwith("Other, but should be rejected");
+   };
+  };
+})

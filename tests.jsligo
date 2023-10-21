@@ -1,0 +1,28 @@
+#include "./types.jsligo"
+#include "./storage.jsligo"
+#include "./tcp.jsligo"
+#include "./test-utils.jsligo"
+
+const originatetcp = (initiator:address) => {
+  const initial_tcp_storage: tcp_storage = {
+    initiators: Set.literal(list([initiator])), 
+    profiles: Map.empty,
+  };
+  return Test.originate(contract_of(TCP), initial_tcp_storage, 0 as tez);
+}
+
+/** TCP **/
+
+const clear_initiators = (() : unit => {
+  const bs_account_0 = Test.get_bootstrap_account(0 as nat);
+  const initiator_address = bs_account_0[0];
+  const c = originatetcp(initiator_address);
+  let storage = Test.get_storage(c.addr);
+  assert(Set.size(storage.initiators) == (1 as nat));
+  const caller_not_initator = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
+  const _u = assert_string_failure(caller_not_initator, "Only initiators can call this entrypoint");
+  Test.set_source(initiator_address);
+  const _res = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
+  storage = Test.get_storage(c.addr);
+  assert(Set.size(storage.initiators) == (0 as nat));
+}) ()
