@@ -24,6 +24,14 @@ make compile
 
 ## Deploy
 
+### Ghostnet
+
+```
+make deploy_ghostnet
+```
+
+### Mainnet
+
 WIP
 
 enjoy.
