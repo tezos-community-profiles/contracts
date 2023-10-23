@@ -2,9 +2,13 @@
 
 This repo contains the smart contract(s) for the Tezos Community Profiles project.
 
+**WIP**
+
 ## Views
 
-You can use TCP Profiles from other contracts by using the `get_profile` view.
+You can get TCP Profile data from other contracts by using out views.
+
+WIP 
 
 ## Develop
 
@@ -22,12 +26,14 @@ Run the compile target to compile the TCP contract. A file `compiled/tcp.tz` wil
 make compile
 ```
 
-## Deploy
+## Origination
 
-### Ghostnet
+Origination is the process of adding your contract to the blockchain. 
+
+### Ghostnet (testnet)
 
 ```
-make deploy_ghostnet
+make originate_ghostnet
 ```
 
 ### Mainnet
