@@ -11,7 +11,7 @@ const originatetcp = (initiator:address) => {
   return Test.originate(contract_of(TCP), initial_tcp_storage, 0 as tez);
 }
 
-/** TCP **/
+/** Clear initiators **/
 
 const clear_initiators = (() : unit => {
   const bs_account_0 = Test.get_bootstrap_account(0 as nat);
@@ -26,6 +26,32 @@ const clear_initiators = (() : unit => {
   storage = Test.get_storage(c.addr);
   assert(Set.size(storage.initiators) == (0 as nat));
 }) ()
+
+/** Set init data **/
+
+const init_profile_data = (() : unit => {
+  const initiator = Test.get_bootstrap_account(0 as nat);
+  const initiator_address = initiator[0];
+  const account = Test.get_bootstrap_account(1 as nat);
+  const address = account[0];
+  const c = originatetcp(initiator_address);
+  let storage = Test.get_storage(c.addr);
+  let profile = Big_map.find_opt(address, storage.profiles);
+  assert(Option.is_none(profile));
+  Test.set_source(address);
+  const init_profile_data_res = Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
+  const _u = assert_string_failure(init_profile_data_res, "Only initiators can call this entrypoint");
+  Test.set_source(initiator_address);
+  Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
+  storage = Test.get_storage(c.addr);
+  profile = Big_map.find_opt(address, storage.profiles);
+  assert(Option.is_some(profile));
+  let p = Option.unopt(profile);
+  let val = Option.unopt(Map.find_opt("", p));
+  assert((Option.unopt(Bytes.unpack(val)) as string) == "onchfs://init");
+}) ()
+
+/** Set profile data **/
 
 const set_profile_data = (() : unit => {
   const account = Test.get_bootstrap_account(0 as nat);

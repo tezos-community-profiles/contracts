@@ -14,6 +14,21 @@ namespace TCP {
   };
 
   @entry 
+  const init_profile_data = ([key, value, addr]:[string,bytes,address], s:storage) : ret => {
+    if(Set.mem(Tezos.get_sender(), s.initiators) == false) {
+      return failwith ("Only initiators can call this entrypoint")
+    }
+    const current_profile_option = Big_map.find_opt(addr, s.profiles);
+    const profile = match(current_profile_option) {
+      when(Some(p)): Map.update(key, Some(value), p);
+      when(None): Map.literal(list([[key, value]]));
+    };
+    const updated_profiles = Big_map.update(addr, Some(profile), s.profiles);
+    const updated_storage = { ...s, profiles: updated_profiles };
+    return [list([]), updated_storage];
+  };
+
+  @entry 
   const set_profile_data = ([key, value]:[string,bytes], s:storage) : ret => {
     const sender = Tezos.get_sender();
     const current_profile_option = Big_map.find_opt(sender, s.profiles);
