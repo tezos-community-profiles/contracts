@@ -7,6 +7,7 @@ const originatetcp = (initiator:address) => {
   const initial_tcp_storage: tcp_storage = {
     initiators: Set.literal(list([initiator])), 
     profiles: Big_map.empty,
+    metadata: Big_map.empty
   };
   return Test.originate(contract_of(TCP), initial_tcp_storage, 0 as tez);
 }
