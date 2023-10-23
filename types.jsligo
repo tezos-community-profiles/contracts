@@ -1,5 +1,6 @@
+type profile_data = map <string, bytes>
 
 type tcp_storage = {
   initiators: set <address>,
-  profiles: map <address, string> // TODO: We need meta for profiles also, so we need a type here
+  profiles: big_map <address, profile_data> 
 }
