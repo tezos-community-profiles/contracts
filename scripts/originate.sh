@@ -22,13 +22,14 @@ import secret key deployer unencrypted:$PRIVATE_KEY --force
 # Originate
 docker run --rm \
 -v "$(pwd)"/compiled/tcp.tz:/home/tezos/tcp.tz:ro \
+-v "$(pwd)"/compiled/storage.tz:/home/tezos/storage.tz:ro \
 -v tcp_deploy:/home/tezos/.tezos-client \
---entrypoint octez-client \
+--entrypoint /bin/sh \
 -it tezos/tezos:latest \
---endpoint $TCP_RPC \
+-c "octez-client --endpoint $TCP_RPC \
 originate contract scp \
 transferring 0 from deployer \
-running tcp.tz --burn-cap 0.1
+running tcp.tz --init \"\$(cat storage.tz)\" --burn-cap 0.3"
 
 # Remove docker volume
 docker volume rm tcp_deploy

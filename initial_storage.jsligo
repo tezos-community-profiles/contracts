@@ -1,0 +1,5 @@
+{
+  initiators: Set.literal(list(["tz1SZGvBqH8e6WvAbLpmQYQkmX4Hjai2t4kX" as address])), 
+  profiles: Big_map.empty,
+  metadata: Big_map.empty
+}

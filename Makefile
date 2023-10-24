@@ -5,7 +5,7 @@ test:
 
 compile:
 > mkdir -p compiled
-> ligo compile contract tcp.jsligo -m TCP -o compiled/tcp.tz
+> scripts/compile.sh
 
 originate_ghostnet: 
 > export TCP_RPC=https://ghostnet.tezos.marigold.dev/; scripts/originate.sh 

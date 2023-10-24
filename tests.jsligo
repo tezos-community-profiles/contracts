@@ -1,5 +1,4 @@
 #include "./types.jsligo"
-#include "./storage.jsligo"
 #include "./tcp.jsligo"
 #include "./test-utils.jsligo"
 
