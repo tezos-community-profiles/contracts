@@ -1,5 +1,22 @@
 {
   initiators: Set.literal(list(["tz1SZGvBqH8e6WvAbLpmQYQkmX4Hjai2t4kX" as address])), 
   profiles: Big_map.empty,
-  metadata: Big_map.empty
+  metadata: Big_map.literal(list([
+    ["", bytes `tezos-storage:data`],
+    ["data", bytes `{
+      "name" : "TCP",
+      "description" : "Tezos Community Profiles",
+      "version" : "0.0.1",
+      "license": { "name" : "MIT" },
+      "authors" : [ "asbjornenge <asbjorn@surflabs.net>" ],
+      "homepage" : "https://github.com/tezos-community-profiles",
+      "source":{
+        "tools":["Ligo"],
+        "location":"https://github.com/tezos-community-profiles/contracts"
+      },
+      "interfaces":[],
+      "errors": [],
+      "views": []
+    }`]
+  ])) 
 }

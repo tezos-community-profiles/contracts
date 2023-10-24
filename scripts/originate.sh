@@ -29,7 +29,7 @@ docker run --rm \
 -c "octez-client --endpoint $TCP_RPC \
 originate contract scp \
 transferring 0 from deployer \
-running tcp.tz --init \"\$(cat storage.tz)\" --burn-cap 0.3"
+running tcp.tz --init \"\$(cat storage.tz)\" --burn-cap 1"
 
 # Remove docker volume
 docker volume rm tcp_deploy
