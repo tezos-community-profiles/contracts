@@ -1,14 +1,16 @@
-#include "./types.jsligo"
-#include "./tcp.jsligo"
-#include "./test-utils.jsligo"
+#import "./types.jsligo" "TYPES"
+#import "./tcp.jsligo" "TCP"
+#import "./test-utils.jsligo" "UTILS"
+
+// TODO: Test that will call view
 
 const originatetcp = (initiator:address) => {
-  const initial_tcp_storage: tcp_storage = {
+  const initial_tcp_storage: TYPES.tcp_storage = {
     initiators: Set.literal(list([initiator])), 
     profiles: Big_map.empty,
     metadata: Big_map.empty
   };
-  return Test.originate(contract_of(TCP), initial_tcp_storage, 0 as tez);
+  return Test.originate(contract_of(TCP.TCP), initial_tcp_storage, 0 as tez);
 }
 
 /** Clear initiators **/
@@ -20,7 +22,7 @@ const clear_initiators = (() : unit => {
   let storage = Test.get_storage(c.addr);
   assert(Set.size(storage.initiators) == (1 as nat));
   const caller_not_initator = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
-  const _u = assert_string_failure(caller_not_initator, "Only initiators can call this entrypoint");
+  const _u = UTILS.assert_string_failure(caller_not_initator, "Only initiators can call this entrypoint");
   Test.set_source(initiator_address);
   const _res = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
   storage = Test.get_storage(c.addr);
@@ -40,7 +42,7 @@ const init_profile_data = (() : unit => {
   assert(Option.is_none(profile));
   Test.set_source(address);
   const init_profile_data_res = Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
-  const _u = assert_string_failure(init_profile_data_res, "Only initiators can call this entrypoint");
+  const _u = UTILS.assert_string_failure(init_profile_data_res, "Only initiators can call this entrypoint");
   Test.set_source(initiator_address);
   Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
   storage = Test.get_storage(c.addr);

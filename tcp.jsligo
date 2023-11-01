@@ -1,11 +1,11 @@
-#include "./types.jsligo"
+#import "./types.jsligo" "TYPES"
 
-namespace TCP {
-  type storage = tcp_storage;
-  type ret = [list<operation>, tcp_storage];
+export namespace TCP {
+  type storage = TYPES.tcp_storage;
+  type ret = [list<operation>, TYPES.tcp_storage];
 
   @view
-  const get_profile = (addr:address , s:storage) : profile_data => {
+  const get_profile = (addr:address , s:storage) : TYPES.profile_data => {
     const current_profile_option = Big_map.find_opt(addr, s.profiles);
     const profile = match(current_profile_option) {
       when(Some(p)): p; 

@@ -1,5 +1,5 @@
-type profile_data = map <string, bytes>;
-type tcp_storage = {
+export type profile_data = map <string, bytes>;
+export type tcp_storage = {
   initiators: set <address>,
   profiles: big_map <address, profile_data>,
   metadata: big_map <string, bytes>

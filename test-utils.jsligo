@@ -1,4 +1,4 @@
-const assert_string_failure = ((res:test_exec_result, expected:string) : unit => { 
+export const assert_string_failure = ((res:test_exec_result, expected:string) : unit => { 
   const expected_res = Test.eval(expected);
   match (res) {
     when(Success(_n)): failwith("Success, but should be rejected");
