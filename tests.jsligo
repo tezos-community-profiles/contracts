@@ -2,7 +2,7 @@
 #import "./tcp.jsligo" "TCP"
 #import "./test-utils.jsligo" "UTILS"
 
-// TODO: Test that will call view
+// TODO: Test that will call get_profile view
 
 const originatetcp = (initiator:address) => {
   const initial_tcp_storage: TYPES.tcp_storage = {
@@ -10,63 +10,59 @@ const originatetcp = (initiator:address) => {
     profiles: Big_map.empty,
     metadata: Big_map.empty
   };
-  return Test.originate(contract_of(TCP.TCP), initial_tcp_storage, 0 as tez);
+  return Test.Next.Originate.contract(contract_of(TCP.TCP), initial_tcp_storage, 0 as tez);
 }
 
 /** Clear initiators **/
 
 const clear_initiators = (() : unit => {
-  const bs_account_0 = Test.get_bootstrap_account(0 as nat);
-  const initiator_address = bs_account_0[0];
+  const initiator_address = Test.Next.Account.address(0 as nat);
   const c = originatetcp(initiator_address);
-  let storage = Test.get_storage(c.addr);
-  assert(Set.size(storage.initiators) == (1 as nat));
-  const caller_not_initator = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
+  let storage = Test.Next.Typed_address.get_storage(c.taddr);
+  Assert.assert(Set.size(storage.initiators) == (1 as nat));
+  const caller_not_initator = Test.Next.Typed_address.transfer(c.taddr, Clear_initiators(), 0 as tez);
   const _u = UTILS.assert_string_failure(caller_not_initator, "Only initiators can call this entrypoint");
-  Test.set_source(initiator_address);
-  const _res = Test.transfer(c.addr, Clear_initiators(), 0 as tez);
-  storage = Test.get_storage(c.addr);
-  assert(Set.size(storage.initiators) == (0 as nat));
+  Test.Next.State.set_source(initiator_address);
+  const _res = Test.Next.Typed_address.transfer(c.taddr, Clear_initiators(), 0 as tez);
+  storage = Test.Next.Typed_address.get_storage(c.taddr);
+  Assert.assert(Set.size(storage.initiators) == (0 as nat));
 }) ()
 
 /** Set init data **/
 
 const init_profile_data = (() : unit => {
-  const initiator = Test.get_bootstrap_account(0 as nat);
-  const initiator_address = initiator[0];
-  const account = Test.get_bootstrap_account(1 as nat);
-  const address = account[0];
+  const initiator_address = Test.Next.Account.address(0 as nat);
+  const address = Test.Next.Account.address(1 as nat);
   const c = originatetcp(initiator_address);
-  let storage = Test.get_storage(c.addr);
+  let storage = Test.Next.Typed_address.get_storage(c.taddr);
   let profile = Big_map.find_opt(address, storage.profiles);
-  assert(Option.is_none(profile));
-  Test.set_source(address);
-  const init_profile_data_res = Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
+  Assert.assert(Option.is_none(profile));
+  Test.Next.State.set_source(address);
+  const init_profile_data_res = Test.Next.Typed_address.transfer(c.taddr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
   const _u = UTILS.assert_string_failure(init_profile_data_res, "Only initiators can call this entrypoint");
-  Test.set_source(initiator_address);
-  Test.transfer(c.addr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
-  storage = Test.get_storage(c.addr);
+  Test.Next.State.set_source(initiator_address);
+  Test.Next.Typed_address.transfer(c.taddr, Init_profile_data(["", Bytes.pack("onchfs://init"), address]), 0 as tez);
+  storage = Test.Next.Typed_address.get_storage(c.taddr);
   profile = Big_map.find_opt(address, storage.profiles);
-  assert(Option.is_some(profile));
-  let p = Option.unopt(profile);
-  let val = Option.unopt(Map.find_opt("", p));
-  assert((Option.unopt(Bytes.unpack(val)) as string) == "onchfs://init");
+  Assert.assert(Option.is_some(profile));
+  let p = Option.value_with_error("No profile exists", profile);
+  let val = Option.value_with_error("Empty key not found", Map.find_opt("", p));
+  Assert.assert((Option.value_with_error("Wrong data", Bytes.unpack(val)) as string) == "onchfs://init");
 }) ()
 
 /** Set profile data **/
 
 const set_profile_data = (() : unit => {
-  const account = Test.get_bootstrap_account(0 as nat);
-  const address = account[0];
+  const address = Test.Next.Account.address(0 as nat);
   const c = originatetcp(address);
-  let storage = Test.get_storage(c.addr);
+  let storage = Test.Next.Typed_address.get_storage(c.taddr);
   let profile = Big_map.find_opt(address, storage.profiles);
-  assert(Option.is_none(profile));
-  const _set_profile_data_res = Test.transfer(c.addr, Set_profile_data(["", Bytes.pack("onchfs://yolo")]), 0 as tez);
-  storage = Test.get_storage(c.addr);
+  Assert.assert(Option.is_none(profile));
+  const _set_profile_data_res = Test.Next.Typed_address.transfer(c.taddr, Set_profile_data(["", Bytes.pack("onchfs://yolo")]), 0 as tez);
+  storage = Test.Next.Typed_address.get_storage(c.taddr);
   profile = Big_map.find_opt(address, storage.profiles);
-  assert(Option.is_some(profile));
-  let p = Option.unopt(profile);
-  let val = Option.unopt(Map.find_opt("", p));
-  assert((Option.unopt(Bytes.unpack(val)) as string) == "onchfs://yolo");
+  Assert.assert(Option.is_some(profile));
+  let p = Option.value_with_error("No profile exists", profile);
+  let val = Option.value_with_error("Empty key not found", Map.find_opt("", p));
+  Assert.assert((Option.value_with_error("Wrong data", Bytes.unpack(val)) as string) == "onchfs://yolo");
 }) ()
