@@ -8,4 +8,4 @@ compile:
 > scripts/compile.sh
 
 originate_ghostnet: 
-> export TCP_RPC=https://ghostnet.tezos.marigold.dev/; scripts/originate.sh 
+> export TCP_RPC=https://rpc.ghostnet.teztnets.com/; scripts/originate.sh 

@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PRIVATE_KEY=$(cat secrets/originator.json | jq -r .privkey)
+TEZOS_IMAGE="tezos/tezos:octez-v20.0-rc1" # This needs to match version running on ghostnet
 
 # Create Docker volume
 docker volume create tcp_deploy
@@ -10,13 +11,13 @@ docker run --rm \
 --user root \
 -v tcp_deploy:/home/tezos/.tezos-client \
 --entrypoint /bin/chmod \
-tezos/tezos:latest -R 777 /home/tezos/.tezos-client
+$TEZOS_IMAGE -R 777 /home/tezos/.tezos-client
 
 # Import private key
 docker run --rm \
 -v tcp_deploy:/home/tezos/.tezos-client \
 --entrypoint octez-client \
--it tezos/tezos:latest \
+-it $TEZOS_IMAGE \
 import secret key deployer unencrypted:$PRIVATE_KEY --force
 
 # Originate
@@ -25,7 +26,7 @@ docker run --rm \
 -v "$(pwd)"/compiled/storage.tz:/home/tezos/storage.tz:ro \
 -v tcp_deploy:/home/tezos/.tezos-client \
 --entrypoint /bin/sh \
--it tezos/tezos:latest \
+-it $TEZOS_IMAGE \
 -c "octez-client --endpoint $TCP_RPC \
 originate contract scp \
 transferring 0 from deployer \
